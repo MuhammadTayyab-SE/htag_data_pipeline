@@ -1,5 +1,10 @@
 import logging
+import sys
 import time
+from pathlib import Path
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from htag_data_pipeline.endpoints import ENDPOINTS
 from htag_data_pipeline.htag_client import fetch_endpoint_data, fetch_localities
@@ -8,16 +13,18 @@ from htag_data_pipeline.json_storage import save_json_response
 
 def ingest_localities_pipeline(data_dir="data", run_date=None):
     """Fetch localities from HTAG API and save raw JSON locally."""
-    localities = fetch_localities()
-    payload = {"results": localities, "total": len(localities)}
-    output_file = save_json_response(
-        payload,
-        "locality",
-        base_dir=data_dir,
-        run_date=run_date,
-    )
-    return output_file
-
+    try:
+        localities = fetch_localities()
+        payload = {"results": localities, "total": len(localities)}
+        output_file = save_json_response(
+            response_data=payload,
+            endpoint_path="locality",
+            base_dir=data_dir,
+            run_date=run_date,
+        )
+        return True
+    except:
+        return False
 
 def ingest_endpoint_pipeline(endpoint_path, localities, data_dir="data", run_date=None, sleep_seconds=0.3):
     """Fetch one HTAG endpoint for each locality and save raw JSON locally."""

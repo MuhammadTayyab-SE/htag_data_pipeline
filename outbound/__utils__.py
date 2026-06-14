@@ -75,12 +75,12 @@ def upsert_records(schema, table_name, records, batch_size=1000, on_conflict=Non
 
     supabase = supabase or get_supabase_client()
     responses = []
-
+    
     for batch in chunks(records, batch_size):
         if on_conflict:
-            query = supabase.schema(schema).table(table_name).upsert(batch, on_conflict=on_conflict)
+            query = supabase.schema(schema).table(table_name).upsert(batch, on_conflict=on_conflict, count="exact")
         else:
-            query = supabase.schema(schema).table(table_name).upsert(batch)
+            query = supabase.schema(schema).table(table_name).upsert(batch, count="exact")
         responses.append(query.execute())
 
     return responses
