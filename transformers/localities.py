@@ -17,14 +17,24 @@ LOCALITY_COLUMNS = [
 ]
 
 
-def find_locality_response_files(data_dir="data", version="all"):
+def find_locality_response_files(data_dir="data", version="all", run_date=None):
     """Find locality response JSON files under the newest data date folder."""
-    return find_endpoint_response_files(data_dir=data_dir, endpoint="locality", version=version)
+    return find_endpoint_response_files(
+        data_dir=data_dir,
+        endpoint="locality",
+        version=version,
+        run_date=run_date,
+    )
 
 
-def load_localities_raw(data_dir="data", version="all"):
+def load_localities_raw(data_dir="data", version="all", run_date=None):
     """Load raw locality records from response.json files."""
-    return load_endpoint_records(data_dir=data_dir, endpoint="locality", version=version)
+    return load_endpoint_records(
+        data_dir=data_dir,
+        endpoint="locality",
+        version=version,
+        run_date=run_date,
+    )
 
 
 def transform_localities(records):
@@ -61,9 +71,9 @@ def transform_localities(records):
     return df
 
 
-def load_transform_localities(data_dir="data", version="all"):
+def load_transform_localities(data_dir="data", version="all", run_date=None):
     """Load localities from data/latest-date/locality and return a cleaned DataFrame."""
-    records = load_localities_raw(data_dir=data_dir, version=version)
+    records = load_localities_raw(data_dir=data_dir, version=version, run_date=run_date)
     return transform_localities(records)
 
 
@@ -79,6 +89,6 @@ def save_clean_localities(df, data_dir="data", run_date=None):
 
 def load_transform_save_localities(data_dir="data", version="all", run_date=None):
     """Load raw localities, transform them, save clean output, and return the DataFrame."""
-    df = load_transform_localities(data_dir=data_dir, version=version)
+    df = load_transform_localities(data_dir=data_dir, version=version, run_date=run_date)
     save_clean_localities(df, data_dir=data_dir, run_date=run_date)
     return df

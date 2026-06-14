@@ -1,7 +1,6 @@
 import requests
 import time
 from htag_data_pipeline.config import HTAG_BASE_URL, HTAG_HEADERS
-print(HTAG_BASE_URL, HTAG_HEADERS)
 
 def fetch_localities(limit=1000):
     """Fetch all suburbs (LOC_PIDs) with pagination"""
@@ -11,7 +10,6 @@ def fetch_localities(limit=1000):
         params = {"limit": limit, "offset": offset}
         resp = requests.get(f"{HTAG_BASE_URL}/reference/locality", headers=HTAG_HEADERS, params=params, timeout=30)
         data = resp.json()
-        print(resp.json())
         results = data.get("results", [])
         if not results:
             break

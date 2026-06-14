@@ -45,7 +45,7 @@ def _require_endpoint(endpoint):
     return endpoint
 
 
-def find_endpoint_response_files(data_dir="data", endpoint=None, version="all", layer="raw"):
+def find_endpoint_response_files(data_dir="data", endpoint=None, version="all", layer="raw", run_date=None):
     """
     Find response JSON files under data/latest-date/endpoint/layer.
 
@@ -54,8 +54,11 @@ def find_endpoint_response_files(data_dir="data", endpoint=None, version="all", 
     version="v001" returns that specific version folder.
     """
     endpoint = _require_endpoint(endpoint)
-    latest_date_dir = find_latest_date_dir(data_dir)
-    endpoint_dir = latest_date_dir / endpoint / layer
+    if run_date:
+        date_dir = Path(data_dir) / str(run_date)
+    else:
+        date_dir = find_latest_date_dir(data_dir)
+    endpoint_dir = date_dir / endpoint / layer
 
     if not endpoint_dir.exists():
         raise FileNotFoundError(f"Endpoint directory not found: {endpoint_dir}")
@@ -92,11 +95,18 @@ def records_from_payload(payload, records_key="results"):
     return records if isinstance(records, list) else []
 
 
-def load_endpoint_records(data_dir="data", endpoint=None, version="all", records_key="results", layer="raw"):
+def load_endpoint_records(
+    data_dir="data",
+    endpoint=None,
+    version="all",
+    records_key="results",
+    layer="raw",
+    run_date=None,
+):
     """Load records from endpoint response JSON files."""
     endpoint = _require_endpoint(endpoint)
     records = []
-    for file_path in find_endpoint_response_files(data_dir, endpoint, version, layer):
+    for file_path in find_endpoint_response_files(data_dir, endpoint, version, layer, run_date):
         with file_path.open("r", encoding="utf-8") as file:
             payload = json.load(file)
 
