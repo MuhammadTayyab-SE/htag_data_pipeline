@@ -39,14 +39,21 @@ def version_number(path):
     return int(match.group(1)) if match else -1
 
 
-def find_endpoint_response_files(data_dir="data", endpoint="locality", version="latest", layer="raw"):
+def _require_endpoint(endpoint):
+    if not endpoint:
+        raise ValueError("endpoint is required, for example endpoint='locality'")
+    return endpoint
+
+
+def find_endpoint_response_files(data_dir="data", endpoint=None, version="all", layer="raw"):
     """
     Find response JSON files under data/latest-date/endpoint/layer.
 
-    version="latest" returns only the newest vNNN folder.
     version="all" returns every endpoint version for that date.
+    version="latest" returns only the newest vNNN folder.
     version="v001" returns that specific version folder.
     """
+    endpoint = _require_endpoint(endpoint)
     latest_date_dir = find_latest_date_dir(data_dir)
     endpoint_dir = latest_date_dir / endpoint / layer
 
@@ -85,8 +92,9 @@ def records_from_payload(payload, records_key="results"):
     return records if isinstance(records, list) else []
 
 
-def load_endpoint_records(data_dir="data", endpoint="locality", version="latest", records_key="results", layer="raw"):
+def load_endpoint_records(data_dir="data", endpoint=None, version="all", records_key="results", layer="raw"):
     """Load records from endpoint response JSON files."""
+    endpoint = _require_endpoint(endpoint)
     records = []
     for file_path in find_endpoint_response_files(data_dir, endpoint, version, layer):
         with file_path.open("r", encoding="utf-8") as file:
@@ -100,8 +108,9 @@ def load_endpoint_records(data_dir="data", endpoint="locality", version="latest"
     return records
 
 
-def clean_output_path(data_dir="data", endpoint="locality", run_date=None, file_name="response.csv"):
+def clean_output_path(data_dir="data", endpoint=None, run_date=None, file_name="response.csv"):
     """Return data/date/endpoint/clean/file_name, creating the clean folder if needed."""
+    endpoint = _require_endpoint(endpoint)
     if run_date:
         date_dir = Path(data_dir) / str(run_date)
     else:
@@ -112,7 +121,7 @@ def clean_output_path(data_dir="data", endpoint="locality", run_date=None, file_
     return output_dir / file_name
 
 
-def save_clean_dataframe(df, data_dir="data", endpoint="locality", run_date=None, file_name="response.csv"):
+def save_clean_dataframe(df, data_dir="data", endpoint=None, run_date=None, file_name="response.csv"):
     """
     Save a cleaned DataFrame to data/date/endpoint/clean/response.csv.
 
