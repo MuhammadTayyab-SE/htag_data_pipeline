@@ -1,7 +1,11 @@
 import json
+import logging
 import re
 from datetime import date
 from pathlib import Path
+
+
+logger = logging.getLogger(__name__)
 
 
 def endpoint_to_folder(endpoint_path):
@@ -31,6 +35,12 @@ def save_json_response(response_data, endpoint_path, base_dir="data", run_date=N
     run_date = run_date or date.today().strftime("%Y%m%d")
     endpoint_folder = endpoint_to_folder(endpoint_path)
     endpoint_dir = Path(base_dir) / run_date / endpoint_folder / "raw/"
+    logger.info(
+        "Activity started | activity=save_json_response | endpoint=%s | base_dir=%s | run_date=%s",
+        endpoint_path,
+        base_dir,
+        run_date,
+    )
     version_dir = next_version_folder(endpoint_dir)
     version_dir.mkdir(parents=True, exist_ok=False)
 
@@ -39,4 +49,11 @@ def save_json_response(response_data, endpoint_path, base_dir="data", run_date=N
         json.dump(response_data, file, indent=2, ensure_ascii=False)
         file.write("\n")
 
+    record_count = len(response_data.get("results", [])) if isinstance(response_data, dict) else None
+    logger.info(
+        "Activity completed | activity=save_json_response | endpoint=%s | records=%s | output_file=%s",
+        endpoint_path,
+        record_count,
+        output_path,
+    )
     return output_path
