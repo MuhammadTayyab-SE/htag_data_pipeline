@@ -3,6 +3,7 @@ import pandas as pd
 from .__utils__ import (
     find_endpoint_response_files,
     load_endpoint_records,
+    save_clean_dataframe,
 )
 
 
@@ -51,7 +52,10 @@ def transform_localities(records):
     df["lga_pid_ref"] = df["lga_pid_ref"].str.upper()
 
     df = df.dropna(subset=["loc_pid", "locality", "postcode", "state_name"])
-    df = df.drop_duplicates(subset=["loc_pid", "_source_file"], keep="last").reset_index(drop=True)
+    duplicate_columns = ["loc_pid"]
+    if "_source_file" in df.columns:
+        duplicate_columns.append("_source_file")
+    df = df.drop_duplicates(subset=duplicate_columns, keep="last").reset_index(drop=True)
     df = df.sort_values(["state_name", "locality", "postcode"], ignore_index=True)
 
     return df
@@ -61,3 +65,19 @@ def load_transform_localities(data_dir="data", version="latest"):
     """Load localities from data/latest-date/locality and return a cleaned DataFrame."""
     records = load_localities_raw(data_dir=data_dir, version=version)
     return transform_localities(records)
+
+
+def save_clean_localities(df, data_dir="data", run_date=None):
+    """Overwrite the clean locality response file for the selected date."""
+    return save_clean_dataframe(
+        df,
+        data_dir=data_dir,
+        endpoint="locality",
+        run_date=run_date,
+    )
+
+def load_transform_save_localities(data_dir="data", version="latest", run_date=None):
+    """Load raw localities, transform them, save clean output, and return the DataFrame."""
+    df = load_transform_localities(data_dir=data_dir, version=version)
+    save_clean_localities(df, data_dir=data_dir, run_date=run_date)
+    return df

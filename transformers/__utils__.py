@@ -39,16 +39,16 @@ def version_number(path):
     return int(match.group(1)) if match else -1
 
 
-def find_endpoint_response_files(data_dir="data", endpoint="locality", version="latest"):
+def find_endpoint_response_files(data_dir="data", endpoint="locality", version="latest", layer="raw"):
     """
-    Find response JSON files under data/latest-date/endpoint.
+    Find response JSON files under data/latest-date/endpoint/layer.
 
     version="latest" returns only the newest vNNN folder.
     version="all" returns every endpoint version for that date.
     version="v001" returns that specific version folder.
     """
     latest_date_dir = find_latest_date_dir(data_dir)
-    endpoint_dir = latest_date_dir / endpoint
+    endpoint_dir = latest_date_dir / endpoint / layer
 
     if not endpoint_dir.exists():
         raise FileNotFoundError(f"Endpoint directory not found: {endpoint_dir}")
@@ -85,10 +85,10 @@ def records_from_payload(payload, records_key="results"):
     return records if isinstance(records, list) else []
 
 
-def load_endpoint_records(data_dir="data", endpoint="locality", version="latest", records_key="results"):
+def load_endpoint_records(data_dir="data", endpoint="locality", version="latest", records_key="results", layer="raw"):
     """Load records from endpoint response JSON files."""
     records = []
-    for file_path in find_endpoint_response_files(data_dir, endpoint, version):
+    for file_path in find_endpoint_response_files(data_dir, endpoint, version, layer):
         with file_path.open("r", encoding="utf-8") as file:
             payload = json.load(file)
 
@@ -98,3 +98,31 @@ def load_endpoint_records(data_dir="data", endpoint="locality", version="latest"
             records.append(record)
 
     return records
+
+
+def clean_output_path(data_dir="data", endpoint="locality", run_date=None, file_name="response.csv"):
+    """Return data/date/endpoint/clean/file_name, creating the clean folder if needed."""
+    if run_date:
+        date_dir = Path(data_dir) / str(run_date)
+    else:
+        date_dir = find_latest_date_dir(data_dir)
+
+    output_dir = date_dir / endpoint / "clean"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return output_dir / file_name
+
+
+def save_clean_dataframe(df, data_dir="data", endpoint="locality", run_date=None, file_name="response.csv"):
+    """
+    Save a cleaned DataFrame to data/date/endpoint/clean/response.csv.
+
+    This intentionally overwrites the clean file on each run.
+    """
+    output_path = clean_output_path(
+        data_dir=data_dir,
+        endpoint=endpoint,
+        run_date=run_date,
+        file_name=file_name,
+    )
+    df.to_csv(output_path, index=False)
+    return output_path

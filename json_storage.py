@@ -24,13 +24,13 @@ def next_version_folder(endpoint_dir):
 
 def save_json_response(response_data, endpoint_path, base_dir="data", run_date=None):
     """
-    Save an API response under data/YYYY-MM-DD/endpoint/vNNN/response.json.
+    Save an API response under data/YYYYMMDD/endpoint/raw/vNNN/response.json.
 
     Returns the path to the written JSON file.
     """
-    run_date = run_date or date.today().isoformat()
+    run_date = run_date or date.today().strftime("%Y%m%d")
     endpoint_folder = endpoint_to_folder(endpoint_path)
-    endpoint_dir = Path(base_dir) / run_date / endpoint_folder
+    endpoint_dir = Path(base_dir) / run_date / endpoint_folder / "raw/"
     version_dir = next_version_folder(endpoint_dir)
     version_dir.mkdir(parents=True, exist_ok=False)
 

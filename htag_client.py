@@ -1,6 +1,6 @@
 import requests
 import time
-from config import HTAG_BASE_URL, HTAG_HEADERS
+from htag_data_pipeline.config import HTAG_BASE_URL, HTAG_HEADERS
 print(HTAG_BASE_URL, HTAG_HEADERS)
 
 def fetch_localities(limit=1000):
