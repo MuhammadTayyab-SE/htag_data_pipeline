@@ -1,0 +1,42 @@
+import json
+import re
+from datetime import date
+from pathlib import Path
+
+
+def endpoint_to_folder(endpoint_path):
+    """Convert an API path into a filesystem-safe folder name."""
+    cleaned = endpoint_path.strip("/")
+    slug = re.sub(r"[^A-Za-z0-9]+", "_", cleaned).strip("_").lower()
+    return slug or "root"
+
+
+def next_version_folder(endpoint_dir):
+    existing_versions = []
+    if endpoint_dir.exists():
+        for child in endpoint_dir.iterdir():
+            if child.is_dir() and re.fullmatch(r"v\d+", child.name):
+                existing_versions.append(int(child.name[1:]))
+
+    next_version = max(existing_versions, default=0) + 1
+    return endpoint_dir / f"v{next_version:03d}"
+
+
+def save_json_response(response_data, endpoint_path, base_dir="data", run_date=None):
+    """
+    Save an API response under data/YYYY-MM-DD/endpoint/vNNN/response.json.
+
+    Returns the path to the written JSON file.
+    """
+    run_date = run_date or date.today().isoformat()
+    endpoint_folder = endpoint_to_folder(endpoint_path)
+    endpoint_dir = Path(base_dir) / run_date / endpoint_folder
+    version_dir = next_version_folder(endpoint_dir)
+    version_dir.mkdir(parents=True, exist_ok=False)
+
+    output_path = version_dir / "response.json"
+    with output_path.open("w", encoding="utf-8") as file:
+        json.dump(response_data, file, indent=2, ensure_ascii=False)
+        file.write("\n")
+
+    return output_path
