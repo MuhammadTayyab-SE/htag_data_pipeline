@@ -1,0 +1,105 @@
+pipelines:
+  locality:
+    path: /reference/locality
+    table: localities
+    ingest: N
+    clean: N
+    upload: N
+
+  trends_price:
+    path: /markets/trends/price
+    table: trends_price
+    ingest: Y
+    clean: N
+    upload: N
+
+  trends_rent:
+    path: /markets/trends/rent
+    table: trends_rent
+    ingest: N
+    clean: N
+    upload: N
+
+  trends_yield:
+    path: /markets/trends/yield
+    table: trends_yield
+    ingest: N
+    clean: N
+    upload: N
+
+  trends_growth_rates:
+    path: /markets/trends/growth-rates
+    table: trends_growth_rates
+    ingest: N
+    clean: N
+    upload: N
+
+  trends_years_to_own:
+    path: /markets/trends/years-to-own
+    table: trends_years_to_own
+    ingest: N
+    clean: N
+    upload: N
+
+  trends_demand_profile:
+    path: /markets/trends/demand-profile
+    table: trends_demand_profile
+    ingest: N
+    clean: N
+    upload: N
+
+  demand:
+    path: /markets/demand
+    table: demand
+    ingest: N
+    clean: N
+    upload: N
+
+  supply:
+    path: /markets/supply
+    table: supply
+    ingest: N
+    clean: N
+    upload: N
+
+  scores:
+    path: /markets/scores
+    table: scores
+    ingest: N
+    clean: N
+    upload: N
+
+  risk:
+    path: /markets/risk
+    table: risk
+    ingest: N
+    clean: N
+    upload: N
+
+  fundamentals:
+    path: /markets/fundamentals
+    table: fundamentals
+    ingest: N
+    clean: N
+    upload: N
+
+  cycle:
+    path: /markets/cycle
+    table: cycle
+    ingest: N
+    clean: N
+    upload: N
+
+  rank:
+    path: /markets/rank
+    table: rank
+    ingest: N
+    clean: N
+    upload: N
+
+  growth_cumulative:
+    path: /markets/growth/cumulative
+    table: growth_cumulative
+    ingest: N
+    clean: N
+    upload: N
