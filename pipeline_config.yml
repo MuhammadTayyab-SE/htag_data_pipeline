@@ -9,8 +9,8 @@ pipelines:
   trends_price:
     path: /markets/trends/price
     table: trends_price
-    ingest: Y
-    clean: N
+    ingest: N
+    clean: Y
     upload: N
 
   trends_rent:
