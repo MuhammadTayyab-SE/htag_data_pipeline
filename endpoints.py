@@ -1,14 +1,16 @@
 ENDPOINTS = [
     {
         "path": "/markets/trends/price", 
-        "table": "trends_price",
+        "table": "market_trend_price",
         "params":{ 
             "limit": "1000",
             "offset": "0",
             "area_id":[],
             "level": "suburb"
-        }
+        },
+        "on_conflict": ["area_id","period_end","property_type"]
     },
+
     # {"path": "/markets/trends/rent", "table": "trends_rent"},
     # {"path": "/markets/trends/yield", "table": "trends_yield"},
     # {"path": "/markets/trends/growth-rates", "table": "trends_growth_rates"},

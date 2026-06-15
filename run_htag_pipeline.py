@@ -8,7 +8,7 @@ if __package__ in {None, ""}:
 
 from htag_data_pipeline.pipelines.clean import clean_localities_pipeline, clean_markets_trends_price_pipeline
 from htag_data_pipeline.pipelines.ingest import ingest_all_pipeline, ingest_localities_pipeline
-from htag_data_pipeline.pipelines.upload import upload_localities_pipeline
+from htag_data_pipeline.pipelines.upload import upload_all_endpoints_pipeline, upload_localities_pipeline
 from htag_data_pipeline.logging_utils import setup_pipeline_logging
 from htag_data_pipeline.pipeline_config import (
     enabled_endpoints_for_step,
@@ -128,6 +128,36 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True, config_path=N
         else:
             logger.info("Stage skipped | stage=upload_localities | reason=upload_or_config_disabled")
             console_action("Stage skipped | upload_localities | upload or config disabled")
+        
+        # Upload Endpoints Code
+        upload_endpoints = enabled_endpoints_for_step(pipeline_config, "upload")
+        if upload and upload_endpoints:
+
+            logger.info("Stage started | stage=upload_endpoints | endpoints=%s", len(upload_endpoints))
+            console_action(f"Stage started | upload_endpoints | endpoints={len(upload_endpoints)}")
+
+            responses_by_endpoint = upload_all_endpoints_pipeline(
+                endpoints=upload_endpoints,
+                data_dir=data_dir,
+                run_date=run_date,
+                batch_size=1000,
+            )
+            uploaded_count = sum(
+                getattr(response, "count", 0) or 0
+                for responses in responses_by_endpoint.values()
+                for response in responses
+            )
+
+            logger.info(
+                "Stage completed | stage=upload_endpoints | endpoints=%s | uploaded_count=%s",
+                len(responses_by_endpoint),
+                uploaded_count,
+            )
+            console_action(f"Stage completed | upload_endpoints | uploaded={uploaded_count}")
+            
+        else:
+            logger.info("Stage skipped | stage=upload_endpoints | reason=upload_or_config_disabled")
+            console_action("Stage skipped | upload_endpoints | upload or config disabled")
 
         logger.info("Pipeline run completed successfully")
         console_action("Pipeline finished successfully")

@@ -13,6 +13,11 @@ from .localities import (
     save_clean_localities,
     transform_localities,
 )
+from .markets_trends_price import (
+    load_transform_markets_trends_price,
+    load_transform_save_markets_trends_price,
+    transform_markets_trends_price,
+)
 
 __all__ = [
     "clean_output_path",
@@ -26,4 +31,7 @@ __all__ = [
     "load_transform_localities",
     "save_clean_localities",
     "transform_localities",
+    "load_transform_markets_trends_price",
+    "load_transform_save_markets_trends_price",
+    "transform_markets_trends_price",
 ]

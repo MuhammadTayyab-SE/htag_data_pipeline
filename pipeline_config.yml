@@ -3,15 +3,15 @@ pipelines:
     path: /reference/locality
     table: localities
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   trends_price:
     path: /markets/trends/price
     table: trends_price
     ingest: N
     clean: Y
-    upload: N
+    upload: Y
 
   trends_rent:
     path: /markets/trends/rent
