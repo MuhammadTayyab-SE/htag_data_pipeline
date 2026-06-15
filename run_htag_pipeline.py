@@ -15,29 +15,6 @@ from htag_data_pipeline.logging_utils import setup_pipeline_logging
 today_date = datetime.date.today().strftime("%Y%m%d")
 logger = logging.getLogger(__name__)
 
-# def run_all_pipelines(data_dir="data", run_date=None, upload=True):
-#     """Run ingest, clean, and upload pipeline stages in order."""
-    
-#     print("Ingesting raw API data...")
-#     raw_outputs = ingest_all_pipeline(data_dir=data_dir, run_date=run_date)
-#     print(f"Saved {len(raw_outputs)} raw endpoint output(s)")
-
-#     print("Cleaning locality data...")
-#     clean_localities = clean_localities_pipeline(data_dir=data_dir, run_date=run_date)
-#     print(f"Prepared {len(clean_localities)} clean locality row(s)")
-
-#     upload_responses = []
-#     if upload:
-#         print("Uploading localities to Supabase...")
-#         upload_responses = upload_localities_pipeline(data_dir=data_dir, run_date=run_date)
-#         print(f"Uploaded localities in {len(upload_responses)} batch(es)")
-
-#     return {
-#         "raw_outputs": raw_outputs,
-#         "clean_localities": clean_localities,
-#         "upload_responses": upload_responses,
-#     }
-
 
 def run_all_pipelines(data_dir="data", run_date=None, upload=True):
     run_date = run_date or today_date
@@ -54,6 +31,7 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True):
     try:
         logger.info("Stage started | stage=ingest_localities")
         locality_ingestion = ingest_localities_pipeline(data_dir=data_dir, run_date=run_date)
+
         if locality_ingestion:
             logger.info("Stage completed | stage=ingest_localities")
             print("Data successfully ingested for reference/locality endpoint")

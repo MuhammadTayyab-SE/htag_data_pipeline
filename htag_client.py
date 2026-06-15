@@ -14,23 +14,32 @@ def fetch_localities(limit=1000):
     offset = 0
     while True:
         params = {"limit": limit, "offset": offset}
+        
         logger.info("Request started | endpoint=/reference/locality | offset=%s | limit=%s", offset, limit)
+        
         resp = requests.get(f"{HTAG_BASE_URL}/reference/locality", headers=HTAG_HEADERS, params=params, timeout=30)
+
         logger.info(
             "Request completed | endpoint=/reference/locality | offset=%s | status_code=%s",
             offset,
             resp.status_code,
         )
         resp.raise_for_status()
+        
         data = resp.json()
+        
         results = data.get("results", [])
+        
         if not results:
             logger.info("No more locality records returned | offset=%s", offset)
             break
+        
         all_localities.extend(results)
+        
         logger.info("Locality page fetched | offset=%s | page_records=%s | total_records=%s", offset, len(results), len(all_localities))
         offset += limit
         time.sleep(0.5)  # rate limiting
+    
     logger.info("Activity completed | activity=fetch_localities | total_records=%s", len(all_localities))
     return all_localities
 
