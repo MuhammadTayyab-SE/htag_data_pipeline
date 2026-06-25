@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from htag_data_pipeline.config import SUPABASE_SCHEMA
 from htag_data_pipeline.endpoints import ENDPOINTS
@@ -32,23 +33,48 @@ def normalize_on_conflict(on_conflict):
     return on_conflict
 
 
-def endpoint_clean_folder(endpoint_config):
-    """Return the clean data folder name for an endpoint config."""
+def endpoint_folder_candidates(endpoint_config):
+    """Return possible local folder names for an endpoint config."""
     endpoint = endpoint_config.get("endpoint")
     if endpoint:
-        return endpoint
+        return [endpoint]
 
     path = endpoint_config.get("path")
     if not path:
         raise ValueError("Endpoint config must include 'path' or 'endpoint'")
 
-    return endpoint_to_folder(path)
+    endpoint_folder = endpoint_to_folder(path)
+    table = endpoint_config.get("table")
+    singular_market = endpoint_folder.replace("markets_", "market_", 1)
+    candidates = [endpoint_folder, table, singular_market]
+    return list(dict.fromkeys(candidate for candidate in candidates if candidate))
+
+
+def endpoint_clean_folder(endpoint_config, data_dir="data", run_date=None):
+    """Return the clean data folder name for an endpoint config."""
+    if run_date:
+        date_dir = Path(data_dir) / str(run_date)
+    else:
+        from htag_data_pipeline.transformers.__utils__ import find_latest_date_dir
+
+        date_dir = find_latest_date_dir(data_dir)
+
+    candidates = endpoint_folder_candidates(endpoint_config)
+    for folder in candidates:
+        if (date_dir / folder / "raw").exists() and (date_dir / folder / "clean").exists():
+            return folder
+
+    for folder in candidates:
+        if (date_dir / folder / "clean").exists():
+            return folder
+
+    return candidates[0]
 
 
 def load_clean_endpoint_data(endpoint, data_dir="data", run_date=None):
     """Read an endpoint clean CSV into a DataFrame."""
     endpoint_config = get_endpoint_upload_config(endpoint)
-    endpoint_folder = endpoint_clean_folder(endpoint_config)
+    endpoint_folder = endpoint_clean_folder(endpoint_config, data_dir=data_dir, run_date=run_date)
     logger.info(
         "Activity started | activity=load_clean_endpoint_data | endpoint=%s | folder=%s | data_dir=%s | run_date=%s",
         endpoint_config.get("path"),

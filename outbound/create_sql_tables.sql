@@ -296,6 +296,7 @@ create table If Not exists investitgroup.market_cycle (
     gpd_10 text,
     gsp_3 text,
     gsp_5 text,
+    gsp_10 null,
     projected_annual_capital_growth_low text,
     projected_annual_capital_growth_high text,
     projected_annual_rent_increase text,

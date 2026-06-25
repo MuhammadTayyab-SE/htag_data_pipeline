@@ -70,7 +70,7 @@ pipelines:
     upload: Y
 
   supply_ss:
-    path: /markets/supply/ls
+    path: /markets/supply/ss
     table: market_supply_ss
     ingest: N
     clean: Y

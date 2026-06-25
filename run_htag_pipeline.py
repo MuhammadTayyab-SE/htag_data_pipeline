@@ -6,7 +6,7 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from htag_data_pipeline.pipelines.clean import clean_localities_pipeline, clean_markets_trends_price_pipeline
+from htag_data_pipeline.pipelines.clean import clean_all_endpoints_pipeline, clean_localities_pipeline
 from htag_data_pipeline.pipelines.ingest import ingest_all_pipeline, ingest_localities_pipeline
 from htag_data_pipeline.pipelines.upload import upload_all_endpoints_pipeline, upload_localities_pipeline
 from htag_data_pipeline.logging_utils import setup_pipeline_logging
@@ -96,17 +96,29 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True, config_path=N
             logger.info("Stage skipped | stage=ingest_endpoints | reason=no_config_enabled_endpoints")
             console_action("Stage skipped | ingest_endpoints | no enabled endpoints")
 
-        if pipeline_step_enabled(pipeline_config, "trends_price", "clean", default=False):
-            logger.info("Stage started | stage=clean_markets_trends_price")
-            console_action("Stage started | clean_markets_trends_price")
+        clean_endpoints = enabled_endpoints_for_step(pipeline_config, "clean")
+        if clean_endpoints:
+            logger.info("Stage started | stage=clean_endpoints | endpoints=%s", len(clean_endpoints))
+            console_action(f"Stage started | clean_endpoints | endpoints={len(clean_endpoints)}")
 
-            dataframe = clean_markets_trends_price_pipeline(data_dir=data_dir, version="all", run_date=run_date)
-            
-            logger.info("Stage completed | stage=clean_markets_trends_price | cleaned_rows=%s", len(dataframe))
-            console_action(f"Stage completed | clean_markets_trends_price | rows={len(dataframe)}")
+            dataframes_by_endpoint = clean_all_endpoints_pipeline(
+                endpoints=clean_endpoints,
+                data_dir=data_dir,
+                version="all",
+                run_date=run_date,
+                pipeline_config=pipeline_config,
+            )
+            cleaned_rows = sum(len(dataframe) for dataframe in dataframes_by_endpoint.values())
+
+            logger.info(
+                "Stage completed | stage=clean_endpoints | endpoints=%s | cleaned_rows=%s",
+                len(dataframes_by_endpoint),
+                cleaned_rows,
+            )
+            console_action(f"Stage completed | clean_endpoints | rows={cleaned_rows}")
         else:
-            logger.info("Stage skipped | stage=clean_markets_trends_price | reason=config_disabled")
-            console_action("Stage skipped | clean_markets_trends_price | config disabled")
+            logger.info("Stage skipped | stage=clean_endpoints | reason=no_config_enabled_endpoints")
+            console_action("Stage skipped | clean_endpoints | no enabled endpoints")
 
 
         # Locality Upload Code
@@ -170,3 +182,4 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True, config_path=N
 
 if __name__ == "__main__":
     run_all_pipelines(data_dir="data", run_date=today_date)
+
