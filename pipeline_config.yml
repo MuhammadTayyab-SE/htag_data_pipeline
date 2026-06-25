@@ -8,98 +8,105 @@ pipelines:
 
   trends_price:
     path: /markets/trends/price
-    table: trends_price
+    table: market_trend_price
     ingest: N
     clean: Y
     upload: Y
 
   trends_rent:
     path: /markets/trends/rent
-    table: trends_rent
+    table: market_trends_rent
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   trends_yield:
     path: /markets/trends/yield
-    table: trends_yield
+    table: market_trends_yield
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   trends_growth_rates:
     path: /markets/trends/growth-rates
-    table: trends_growth_rates
+    table: market_trends_growth_rates
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   trends_years_to_own:
     path: /markets/trends/years-to-own
-    table: trends_years_to_own
+    table: market_trends_years_to_own
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   trends_demand_profile:
     path: /markets/trends/demand-profile
-    table: trends_demand_profile
+    table: market_trends_demand_profile
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   demand:
     path: /markets/demand
-    table: demand
+    table: market_demand
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   supply:
     path: /markets/supply
-    table: supply
+    table: market_supply
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
+
+  supply_ls:
+    path: /markets/supply/ls
+    table: market_supply_ls
+    ingest: N
+    clean: Y
+    upload: Y
+
+  supply_ss:
+    path: /markets/supply/ls
+    table: market_supply_ss
+    ingest: N
+    clean: Y
+    upload: Y
 
   scores:
     path: /markets/scores
-    table: scores
+    table: market_scores
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   risk:
     path: /markets/risk
-    table: risk
+    table: market_risk
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   fundamentals:
     path: /markets/fundamentals
-    table: fundamentals
+    table: market_fundamentals
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   cycle:
     path: /markets/cycle
-    table: cycle
+    table: market_cycle
     ingest: N
-    clean: N
-    upload: N
-
-  rank:
-    path: /markets/rank
-    table: rank
-    ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
 
   growth_cumulative:
     path: /markets/growth/cumulative
-    table: growth_cumulative
+    table: market_growth_cumulative
     ingest: N
-    clean: N
-    upload: N
+    clean: Y
+    upload: Y
