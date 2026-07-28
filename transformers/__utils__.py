@@ -128,6 +128,7 @@ def load_endpoint_records(
 ):
     """Load records from endpoint response JSON files."""
     endpoint = _require_endpoint(endpoint)
+
     logger.info(
         "Activity started | activity=load_endpoint_records | endpoint=%s | version=%s | layer=%s | run_date=%s",
         endpoint,
@@ -138,6 +139,7 @@ def load_endpoint_records(
     records = []
     for file_path in find_endpoint_response_files(data_dir, endpoint, version, layer, run_date):
         logger.info("Reading endpoint response file | endpoint=%s | file=%s", endpoint, file_path)
+
         with file_path.open("r", encoding="utf-8") as file:
             payload = json.load(file)
 

@@ -23,11 +23,13 @@ def clean_localities_pipeline(data_dir="data", version="all", run_date=None):
         version,
         run_date,
     )
+
     df = load_transform_save_localities(
         data_dir=data_dir,
         version=version,
         run_date=run_date,
     )
+
     logger.info("Pipeline completed | pipeline=clean_localities | rows=%s", len(df))
     return df
 

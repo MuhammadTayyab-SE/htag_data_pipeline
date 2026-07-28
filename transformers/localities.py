@@ -39,6 +39,7 @@ def load_localities_raw(data_dir="data", version="all", run_date=None):
         version,
         run_date,
     )
+    
     return load_endpoint_records(
         data_dir=data_dir,
         endpoint="locality",
@@ -102,8 +103,10 @@ def transform_localities(records):
 def load_transform_localities(data_dir="data", version="all", run_date=None):
     """Load localities from data/latest-date/locality and return a cleaned DataFrame."""
     logger.info("Activity started | activity=load_transform_localities")
+
     records = load_localities_raw(data_dir=data_dir, version=version, run_date=run_date)
     df = transform_localities(records)
+
     logger.info("Activity completed | activity=load_transform_localities | rows=%s", len(df))
     return df
 
@@ -122,8 +125,12 @@ def save_clean_localities(df, data_dir="data", run_date=None):
 
 def load_transform_save_localities(data_dir="data", version="all", run_date=None):
     """Load raw localities, transform them, save clean output, and return the DataFrame."""
+
     logger.info("Activity started | activity=load_transform_save_localities")
+
     df = load_transform_localities(data_dir=data_dir, version=version, run_date=run_date)
     save_clean_localities(df, data_dir=data_dir, run_date=run_date)
+
     logger.info("Activity completed | activity=load_transform_save_localities | rows=%s", len(df))
+
     return df

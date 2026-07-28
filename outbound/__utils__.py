@@ -101,6 +101,7 @@ def upsert_records(schema, table_name, records, batch_size=1000, on_conflict=Non
         batch_size,
         on_conflict,
     )
+    
     supabase = supabase or get_supabase_client()
     responses = []
     

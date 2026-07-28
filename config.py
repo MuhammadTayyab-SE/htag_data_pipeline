@@ -9,7 +9,7 @@ HTAG_BASE_URL = "https://api.htagai.com/v1"
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-SUPABASE_SCHEMA = "investitgroup"
+SUPABASE_SCHEMA = "htag"
 
 HTAG_HEADERS = {
     "x-api-key": HTAG_API_KEY,
