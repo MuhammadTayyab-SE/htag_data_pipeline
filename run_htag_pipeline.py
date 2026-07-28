@@ -64,8 +64,10 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True, config_path=N
         
         # Locality Clean Code
         if pipeline_step_enabled(pipeline_config, "locality", "clean", default=True):
+
             logger.info("Stage started | stage=clean_localities")
             console_action("Stage started | clean_localities")
+
             dataframe = clean_localities_pipeline(data_dir=data_dir, version="all", run_date=run_date)
             if len(dataframe):
                 logger.info("Stage completed | stage=clean_localities | cleaned_rows=%s", len(dataframe))
@@ -96,6 +98,7 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True, config_path=N
             logger.info("Stage skipped | stage=ingest_endpoints | reason=no_config_enabled_endpoints")
             console_action("Stage skipped | ingest_endpoints | no enabled endpoints")
 
+        # Other Endpoints clean code
         clean_endpoints = enabled_endpoints_for_step(pipeline_config, "clean")
         if clean_endpoints:
             logger.info("Stage started | stage=clean_endpoints | endpoints=%s", len(clean_endpoints))

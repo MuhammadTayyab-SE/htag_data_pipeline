@@ -10,103 +10,47 @@ pipelines:
     path: /markets/trends/price
     table: market_trend_price
     ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
 
   trends_rent:
     path: /markets/trends/rent
     table: market_trends_rent
     ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
 
   trends_yield:
     path: /markets/trends/yield
     table: market_trends_yield
     ingest: N
-    clean: Y
-    upload: Y
-
-  trends_growth_rates:
-    path: /markets/trends/growth-rates
-    table: market_trends_growth_rates
-    ingest: N
-    clean: Y
-    upload: Y
-
-  trends_years_to_own:
-    path: /markets/trends/years-to-own
-    table: market_trends_years_to_own
-    ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
 
   trends_demand_profile:
     path: /markets/trends/demand-profile
     table: market_trends_demand_profile
     ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
 
   demand:
     path: /markets/demand
     table: market_demand
     ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
 
   supply:
     path: /markets/supply
     table: market_supply
     ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
 
-  supply_ls:
-    path: /markets/supply/ls
-    table: market_supply_ls
+  trends_days_on_market:
+    path: /markets/trends/days-on-market
+    table: market_supply
     ingest: N
-    clean: Y
-    upload: Y
-
-  supply_ss:
-    path: /markets/supply/ss
-    table: market_supply_ss
-    ingest: N
-    clean: Y
-    upload: Y
-
-  scores:
-    path: /markets/scores
-    table: market_scores
-    ingest: N
-    clean: Y
-    upload: Y
-
-  risk:
-    path: /markets/risk
-    table: market_risk
-    ingest: N
-    clean: Y
-    upload: Y
-
-  fundamentals:
-    path: /markets/fundamentals
-    table: market_fundamentals
-    ingest: N
-    clean: Y
-    upload: Y
-
-  cycle:
-    path: /markets/cycle
-    table: market_cycle
-    ingest: N
-    clean: Y
-    upload: Y
-
-  growth_cumulative:
-    path: /markets/growth/cumulative
-    table: market_growth_cumulative
-    ingest: N
-    clean: Y
-    upload: Y
+    clean: N
+    upload: N
