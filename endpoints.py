@@ -19,9 +19,9 @@ PERIOD_END_MAX = _TODAY.isoformat()
 ENDPOINTS = [
     {
         "path": "/markets/trends/price", 
-        "table": "market_trends_price",
-        "params":{ 
-            "limit": "1000",
+        "table": "market_price_trends",
+        "params":{
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -33,9 +33,9 @@ ENDPOINTS = [
 
     {
         "path": "/markets/trends/rent", 
-        "table": "market_trends_rent",
+        "table": "market_rent_trends",
         "params":{ 
-            "limit": "1000",
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -48,9 +48,9 @@ ENDPOINTS = [
 
     {
         "path": "/markets/trends/yield", 
-        "table": "market_trends_yield",
+        "table": "market_yield_trends",
         "params":{ 
-            "limit": "1000",
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -64,9 +64,9 @@ ENDPOINTS = [
 
     {
         "path": "/markets/trends/demand-profile", 
-        "table": "market_trends_demand_profile",
+        "table": "market_demand_profiles",
         "params":{ 
-            "limit": "1000",
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -81,7 +81,7 @@ ENDPOINTS = [
         "path": "/markets/demand", 
         "table": "market_demand",
         "params":{ 
-            "limit": "1000",
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -96,7 +96,7 @@ ENDPOINTS = [
         "path": "/markets/supply", 
         "table": "market_supply",
         "params":{ 
-            "limit": "1000",
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -109,9 +109,9 @@ ENDPOINTS = [
         
     {
         "path": "/markets/trends/days-on-market", 
-        "table": "market_supply",
+        "table": "market_days_on_market_trends",
         "params":{ 
-            "limit": "1000",
+            "limit": "100",
             "offset": "0",
             "area_id":[],
             "level": "suburb",
@@ -119,8 +119,5 @@ ENDPOINTS = [
             "period_end_max": PERIOD_END_MAX
         },     
         "on_conflict": ["area_id","period_end","property_type"]
-
     }
-
-
 ]
