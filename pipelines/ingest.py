@@ -59,15 +59,13 @@ def locality_area_id(locality):
     return locality.get("loc_pid") or locality.get("area_id")
 
 
-def append_endpoint_response(records, data):
+def endpoint_response_record_count(data):
     if not data:
         return 0
 
     if isinstance(data, dict) and isinstance(data.get("results"), list):
-        records.extend(data["results"])
         return len(data["results"])
 
-    records.append(data)
     return 1
 
 
@@ -113,21 +111,42 @@ def ingest_endpoint_pipeline(endpoint_path, localities, data_dir="data", run_dat
         run_date,
     )
     console_action(f"Endpoint started | {resolved_endpoint_path} | localities={len(localities)}")
-    records = []
+    output_files = []
+    total_records = 0
+
+    def save_page(response_payload):
+        output_file = save_json_response(
+            response_data=response_payload,
+            endpoint_path=resolved_endpoint_path,
+            base_dir=data_dir,
+            run_date=run_date,
+        )
+        output_files.append(output_file)
+        logger.info(
+            "Endpoint page saved | endpoint=%s | records=%s | output_file=%s",
+            resolved_endpoint_path,
+            len(response_payload.get("results", [])),
+            output_file,
+        )
 
     # if batching is enabled 
     if uses_area_id_batches:
         area_ids = [area_id for area_id in (locality_area_id(locality) for locality in localities) if area_id]
         for batch_number, area_id_batch in enumerate(chunked(area_ids, batch_size), start=1):
-            data = fetch_endpoint_data(endpoint_path, extra_params={"area_id": area_id_batch})
-            appended_records = append_endpoint_response(records, data)
-            if appended_records:
+            data = fetch_endpoint_data(
+                endpoint_path,
+                extra_params={"area_id": area_id_batch},
+                on_page_fetched=save_page,
+            )
+            fetched_records = endpoint_response_record_count(data)
+            total_records += fetched_records
+            if fetched_records:
                 logger.info(
                     "Endpoint batch fetched | endpoint=%s | batch=%s | area_ids=%s | records=%s",
                     resolved_endpoint_path,
                     batch_number,
                     len(area_id_batch),
-                    appended_records,
+                    fetched_records,
                 )
             else:
                 logger.warning(
@@ -141,28 +160,34 @@ def ingest_endpoint_pipeline(endpoint_path, localities, data_dir="data", run_dat
         # execute locality by locality 
         for locality in localities:
             loc_pid = locality["loc_pid"]
-            data = fetch_endpoint_data(endpoint_path, loc_pid)
+            data = fetch_endpoint_data(
+                endpoint_path,
+                loc_pid,
+                on_page_fetched=save_page,
+            )
             if data:
-                data["loc_pid"] = loc_pid
-                records.append(data)
+                total_records += endpoint_response_record_count(data)
             else:
                 logger.warning("Endpoint fetch returned no data | endpoint=%s | loc_pid=%s", resolved_endpoint_path, loc_pid)
             time.sleep(sleep_seconds)
 
-    payload = {"results": records, "total": len(records)}
-    output_file = save_json_response(
-        payload,
-        resolved_endpoint_path,
-        base_dir=data_dir,
-        run_date=run_date,
-    )
+    if output_files:
+        output_file = output_files[-1]
+    else:
+        output_file = save_json_response(
+            response_data={"results": [], "total": 0},
+            endpoint_path=resolved_endpoint_path,
+            base_dir=data_dir,
+            run_date=run_date,
+        )
     logger.info(
-        "Activity completed | activity=fetch_endpoint_for_localities | endpoint=%s | records=%s | output_file=%s",
+        "Activity completed | activity=fetch_endpoint_for_localities | endpoint=%s | records=%s | raw_files=%s | latest_output_file=%s",
         resolved_endpoint_path,
-        len(records),
+        total_records,
+        len(output_files) or 1,
         output_file,
     )
-    console_action(f"Endpoint finished | {resolved_endpoint_path} | records={len(records)}")
+    console_action(f"Endpoint finished | {resolved_endpoint_path} | records={total_records}")
     return output_file
 
 

@@ -71,8 +71,19 @@ def fetch_localities(limit=1000):
     logger.info("Activity completed | activity=fetch_localities | total_records=%s", len(all_localities))
     return all_localities
 
-def fetch_endpoint_data(endpoint, loc_pid=None, extra_params=None):
-    """Fetch all available pages from a configured endpoint."""
+def fetch_endpoint_data(
+    endpoint,
+    loc_pid=None,
+    extra_params=None,
+    on_page_fetched=None,
+):
+    """
+    Fetch all available pages from a configured endpoint.
+
+    When provided, ``on_page_fetched`` is called with each non-empty response
+    payload before the next page is requested. This allows ingestion callers to
+    persist progress without coupling the HTTP client to local storage.
+    """
     endpoint_config = get_endpoint_config(endpoint)
     endpoint_path = endpoint_config["path"]
     url = f"{HTAG_BASE_URL}{endpoint_path}"
@@ -107,6 +118,9 @@ def fetch_endpoint_data(endpoint, loc_pid=None, extra_params=None):
 
         if not page_results:
             break
+
+        if on_page_fetched is not None:
+            on_page_fetched(response_payload)
 
         all_results.extend(page_results)
         if len(page_results) < limit:
