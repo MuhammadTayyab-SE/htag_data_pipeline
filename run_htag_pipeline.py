@@ -184,5 +184,5 @@ def run_all_pipelines(data_dir="data", run_date=None, upload=True, config_path=N
         return False
 
 if __name__ == "__main__":
-    run_all_pipelines(data_dir="data", run_date=today_date)
+    run_all_pipelines(data_dir="data", run_date=today_date, locality_limit=5)
 
